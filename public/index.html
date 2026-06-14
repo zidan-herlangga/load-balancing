@@ -1,225 +1,234 @@
 <!doctype html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <title>DevSec Hub | Local Security Suite</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      body {
-        background-color: #0b0e14;
-      }
-      .active-tool {
-        border-left: 4px solid #7d63ff;
-        background: rgba(125, 99, 255, 0.1);
-        color: white;
-      }
-      #console::-webkit-scrollbar {
-        width: 5px;
-      }
-      #console::-webkit-scrollbar-thumb {
-        background: #7d63ff;
-        border-radius: 10px;
-      }
-      pre {
-        white-space: pre-wrap;
-        word-wrap: break-word;
-      }
-    </style>
-  </head>
-  <body class="text-gray-400">
-    <div class="flex min-h-screen">
-      <aside class="w-72 bg-gray-900 border-r border-gray-800 p-8 space-y-2">
-        <div class="flex items-center gap-3 mb-12">
-          <div
-            class="bg-[#7d63ff] p-2 rounded-lg shadow-lg shadow-purple-500/20"
-          >
-            <svg
-              width="25"
-              height="20"
-              viewBox="0 0 75 61"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M39.154 16.883 51.575 0 62 45H12L28.73 9.31l10.424 7.573Z"
-                fill="white"
-              ></path>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>DevSec Hub — Pentest Toolkit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .dash-card { cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255, 255, 255, 0.04); }
+    .dash-card:hover { transform: translateY(-4px); border-color: rgba(125, 99, 255, 0.2); box-shadow: 0 12px 40px -12px rgba(125, 99, 255, 0.2); }
+    .dash-card .card-icon { transition: transform 0.3s; }
+    .dash-card:hover .card-icon { transform: scale(1.1) rotate(-5deg); }
+    a { text-decoration: none; }
+    @media (max-width: 768px) { .sidebar .tool-btn .tool-label { display: none; } .main { padding: 12px !important; padding-bottom: 70px !important; } .dash-grid { grid-template-columns: 1fr 1fr !important; gap: 8px; } .dash-card { padding: 16px !important; } }
+    @media (max-width: 480px) { .dash-grid { grid-template-columns: 1fr !important; } }
+  </style>
+</head>
+<body class="antialiased min-h-screen">
+  <div class="flex min-h-screen">
+    <aside class="sidebar p-4 space-y-1 flex flex-col shrink-0">
+      <div class="logo-section flex items-center gap-2.5 mb-6 px-3 mt-1">
+        <div class="relative">
+          <div class="bg-[#7d63ff] p-2 rounded-lg glow-sm">
+            <svg width="18" height="14" viewBox="0 0 75 61" fill="none">
+              <path d="M39.154 16.883 51.575 0 62 45H12L28.73 9.31l10.424 7.573Z" fill="white"/>
             </svg>
           </div>
-          <h1 class="text-white font-bold text-xl tracking-tighter">
-            DEVSEC<span class="text-[#7d63ff]">HUB</span>
-          </h1>
         </div>
-
-        <nav class="space-y-1">
-          <button
-            onclick="selectTool('k6')"
-            id="btn-k6"
-            class="tool-btn w-full text-left p-4 rounded-xl text-sm active-tool transition-all"
-          >
-            🚀 Load Test (k6)
-          </button>
-          <button
-            onclick="selectTool('nmap')"
-            id="btn-nmap"
-            class="tool-btn w-full text-left p-4 rounded-xl text-sm hover:bg-gray-800 transition-all"
-          >
-            🔍 Port Scanner
-          </button>
-          <button
-            onclick="selectTool('headers')"
-            id="btn-headers"
-            class="tool-btn w-full text-left p-4 rounded-xl text-sm hover:bg-gray-800 transition-all"
-          >
-            🛡️ Header Audit
-          </button>
-          <button
-            onclick="selectTool('ssl')"
-            id="btn-ssl"
-            class="tool-btn w-full text-left p-4 rounded-xl text-sm hover:bg-gray-800 transition-all"
-          >
-            🔒 SSL Checker
-          </button>
-          <button
-            onclick="selectTool('whois')"
-            id="btn-whois"
-            class="tool-btn w-full text-left p-4 rounded-xl text-sm hover:bg-gray-800 transition-all"
-          >
-            🌐 Whois Lookup
-          </button>
-        </nav>
-      </aside>
-
-      <main class="flex-1 p-10">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
-          <div
-            class="bg-gray-900 p-8 rounded-3xl border border-gray-800 shadow-2xl h-fit"
-          >
-            <h2 id="tool-name" class="text-white font-bold mb-8 text-2xl">
-              Load Test (k6)
-            </h2>
-            <div id="form-content" class="space-y-6"></div>
-            <button
-              id="runBtn"
-              class="w-full mt-10 bg-[#7d63ff] py-5 rounded-2xl text-white font-bold shadow-xl shadow-purple-500/20 hover:brightness-110 active:scale-95 transition-all uppercase tracking-widest text-sm"
-            >
-              Run Tool Engine
-            </button>
-          </div>
-
-          <div
-            class="lg:col-span-2 flex flex-col bg-black rounded-3xl border border-gray-800 shadow-2xl overflow-hidden"
-          >
-            <div
-              class="bg-gray-900/80 px-6 py-4 border-b border-gray-800 flex justify-between items-center"
-            >
-              <div class="flex gap-2">
-                <div
-                  class="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"
-                ></div>
-                <div
-                  class="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"
-                ></div>
-                <div
-                  class="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"
-                ></div>
+        <div>
+          <h1 class="text-white font-extrabold text-sm tracking-tight leading-none">DEVSEC<span class="text-[#7d63ff]">HUB</span></h1>
+          <p class="text-[9px] text-gray-600 font-medium tracking-widest mt-0.5">PENTEST SUITE</p>
+        </div>
+      </div>
+      <nav class="space-y-0.5 flex-1" id="tool-nav">
+          <div class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs flex items-center gap-2.5 active text-white">
+                <i class="fa-solid fa-gauge-high text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">Dashboard</span>
               </div>
-              <span
-                id="status"
-                class="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-600"
-                >Idle Mode</span
-              >
-            </div>
-            <pre
-              id="console"
-              class="p-8 h-[600px] overflow-y-auto font-mono text-sm text-green-400 leading-relaxed"
-            >
-Dashboard siap. Pilih alat di sidebar untuk memulai analisis...</pre
-            >
+          <div class="text-[9px] text-gray-600 font-bold uppercase tracking-widest px-3 pt-3 pb-1">Recon</div>
+          <a href="nmap.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-search text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">Port Scanner</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+          <a href="subdomain.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-sitemap text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">Subdomain Scanner</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+          <a href="dns.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-server text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">DNS Lookup</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+          <a href="geoip.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-globe-americas text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">GeoIP</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+          <div class="text-[9px] text-gray-600 font-bold uppercase tracking-widest px-3 pt-3 pb-1">Web</div>
+          <a href="k6.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-rocket text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">Load Test</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+          <a href="headers.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-shield-halved text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">Header Audit</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+          <a href="ssl.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-lock text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">SSL Checker</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+          <a href="whois.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-circle-info text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">Whois</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+          <a href="cors.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-up-down-left-right text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">CORS Checker</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+          <a href="httpmethods.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-list text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">HTTP Methods</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+          <div class="text-[9px] text-gray-600 font-bold uppercase tracking-widest px-3 pt-3 pb-1">Utility</div>
+          <a href="hash.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-hashtag text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">Hash Generator</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+          <a href="base64.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-clipboard-list text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">Base64</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+          <a href="jwt.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-key text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">JWT Decoder</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+          <a href="password.html" class="tool-btn w-full text-left px-3 py-2.5 rounded-lg text-xs transition-all flex items-center gap-2.5 text-gray-400 hover:text-white">
+                <i class="fa-solid fa-lock text-base shrink-0 w-5"></i>
+                <span class="font-semibold tracking-wide">Password Generator</span>
+                <span class="tool-indicator ml-auto shrink-0"></span>
+              </a>
+
+      </nav>
+      <div class="sidebar-footer pt-3 mt-2 border-t border-white/[.04] px-3">
+        <div class="flex items-center gap-2 text-[9px] text-gray-600 font-medium">
+          <span class="sdot idle"></span>
+          Ready
+        </div>
+      </div>
+    </aside>
+    <main class="flex-1 p-6 main overflow-y-auto">
+      <div class="max-w-6xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-white text-2xl font-extrabold tracking-tight">Pentest Toolkit</h2>
+            <p class="text-sm text-gray-500 mt-1">14 tools untuk reconnaissance, web security, dan utility</p>
+          </div>
+          <div class="flex items-center gap-3 text-xs text-gray-500">
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-[#7d63ff]"></span>14 tools ready</span>
+            <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-green-500"></span>All Node.js</span>
           </div>
         </div>
-      </main>
-    </div>
-
-    <script>
-      let currentTool = 'k6';
-
-      function selectTool(tool) {
-        currentTool = tool;
-        document
-          .querySelectorAll('.tool-btn')
-          .forEach((b) => b.classList.remove('active-tool'));
-        document.getElementById(`btn-${tool}`).classList.add('active-tool');
-
-        const nameEl = document.getElementById('tool-name');
-        const formEl = document.getElementById('form-content');
-
-        const configs = {
-          k6: {
-            title: 'Load Test (k6)',
-            html: `<label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Target URL</label><input type="text" id="target" value="https://test.k6.io" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl text-white focus:border-[#7d63ff] outline-none"><div class="grid grid-cols-2 gap-4"><div><label class="text-[10px] text-gray-500 uppercase">Users</label><input type="number" id="vus" value="10" class="w-full bg-gray-800 border-gray-700 p-4 rounded-xl text-white"></div><div><label class="text-[10px] text-gray-500 uppercase">Duration</label><input type="number" id="dur" value="15" class="w-full bg-gray-800 border-gray-700 p-4 rounded-xl text-white"></div></div>`,
-          },
-          nmap: {
-            title: 'Port Scanner',
-            html: `<label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Target Host</label><input type="text" id="target" value="127.0.0.1" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl text-white focus:border-[#7d63ff] outline-none">`,
-          },
-          headers: {
-            title: 'Header Audit',
-            html: `<label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">URL Audit</label><input type="text" id="target" value="https://google.com" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl text-white focus:border-[#7d63ff] outline-none">`,
-          },
-          ssl: {
-            title: 'SSL Checker',
-            html: `<label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Domain Name</label><input type="text" id="target" value="google.com" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl text-white focus:border-[#7d63ff] outline-none">`,
-          },
-          whois: {
-            title: 'Whois Lookup',
-            html: `<label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Domain</label><input type="text" id="target" value="google.com" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl text-white focus:border-[#7d63ff] outline-none">`,
-          },
-        };
-
-        nameEl.innerText = configs[tool].title;
-        formEl.innerHTML = configs[tool].html;
-      }
-
-      selectTool('k6');
-
-      document.getElementById('runBtn').onclick = async () => {
-        const consoleBox = document.getElementById('console');
-        const statusLabel = document.getElementById('status');
-
-        consoleBox.innerText = `[SYSTEM] Menginisialisasi ${currentTool.toUpperCase()}...\n`;
-        statusLabel.innerText = 'Processing...';
-        statusLabel.className = 'text-yellow-500 font-bold';
-
-        const data = {
-          target: document.getElementById('target').value,
-          vus: document.getElementById('vus')?.value,
-          duration: document.getElementById('dur')?.value,
-        };
-
-        try {
-          const res = await fetch(`/api/run-${currentTool}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-          });
-
-          const reader = res.body.getReader();
-          const decoder = new TextDecoder();
-
-          while (true) {
-            const { value, done } = await reader.read();
-            if (done) break;
-            consoleBox.innerText += decoder.decode(value);
-            consoleBox.scrollTop = consoleBox.scrollHeight;
-          }
-        } catch (err) {
-          consoleBox.innerText += `\n[FATAL ERROR]: ${err.message}`;
-        } finally {
-          statusLabel.innerText = 'Idle Mode';
-          statusLabel.className = 'text-gray-600 font-bold';
-        }
-      };
-    </script>
-  </body>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 dash-grid">
+                    <a href="k6.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-rocket"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">Load Test</h3>
+            <p class="text-xs text-gray-500">HTTP load testing with metrics</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">web &rarr;</span>
+          </a>
+                    <a href="nmap.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-search"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">Port Scanner</h3>
+            <p class="text-xs text-gray-500">Scan 25 common TCP ports</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">recon &rarr;</span>
+          </a>
+                    <a href="headers.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-shield-halved"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">Header Audit</h3>
+            <p class="text-xs text-gray-500">Security headers & scoring</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">web &rarr;</span>
+          </a>
+                    <a href="ssl.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-lock"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">SSL Checker</h3>
+            <p class="text-xs text-gray-500">Certificate validity & expiry</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">web &rarr;</span>
+          </a>
+                    <a href="whois.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-circle-info"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">Whois</h3>
+            <p class="text-xs text-gray-500">Domain registration data</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">web &rarr;</span>
+          </a>
+                    <a href="dns.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-server"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">DNS Lookup</h3>
+            <p class="text-xs text-gray-500">A, AAAA, MX, NS, TXT, CNAME</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">recon &rarr;</span>
+          </a>
+                    <a href="subdomain.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-sitemap"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">Subdomain Scanner</h3>
+            <p class="text-xs text-gray-500">Find subdomains via crt.sh</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">recon &rarr;</span>
+          </a>
+                    <a href="geoip.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-globe-americas"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">GeoIP</h3>
+            <p class="text-xs text-gray-500">IP geolocation & ISP info</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">recon &rarr;</span>
+          </a>
+                    <a href="hash.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-hashtag"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">Hash Generator</h3>
+            <p class="text-xs text-gray-500">MD5, SHA1, SHA256, SHA512</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">utility &rarr;</span>
+          </a>
+                    <a href="base64.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-clipboard-list"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">Base64</h3>
+            <p class="text-xs text-gray-500">Encode / decode instantly</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">utility &rarr;</span>
+          </a>
+                    <a href="cors.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-up-down-left-right"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">CORS Checker</h3>
+            <p class="text-xs text-gray-500">Test misconfiguration</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">web &rarr;</span>
+          </a>
+                    <a href="httpmethods.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-list"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">HTTP Methods</h3>
+            <p class="text-xs text-gray-500">Enumerate allowed methods</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">web &rarr;</span>
+          </a>
+                    <a href="jwt.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-key"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">JWT Decoder</h3>
+            <p class="text-xs text-gray-500">Decode & validate tokens</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">utility &rarr;</span>
+          </a>
+                    <a href="password.html" class="dash-card glass-card rounded-xl p-5 no-underline block">
+            <div class="card-icon text-2xl mb-4"><i class="fa-solid fa-lock"></i></div>
+            <h3 class="text-white font-bold text-sm mb-1">Password Generator</h3>
+            <p class="text-xs text-gray-500">Strong random passwords</p>
+            <span class="inline-block mt-3 text-[10px] text-[#7d63ff] font-semibold">utility &rarr;</span>
+          </a>
+        </div>
+        <div class="mt-10 glass-card rounded-xl p-6 glow">
+          <h3 class="text-white font-bold text-sm mb-3"><i class="fa-solid fa-bolt"></i> Quick Tips</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-gray-500">
+            <div class="flex gap-3 items-start"><span class="text-[#7d63ff] mt-0.5">&bull;</span><span>Gunakan <strong class="text-gray-400">Port Scanner</strong> untuk fast recon target</span></div>
+            <div class="flex gap-3 items-start"><span class="text-[#7d63ff] mt-0.5">&bull;</span><span>Cek security headers dengan <strong class="text-gray-400">Header Audit</strong></span></div>
+            <div class="flex gap-3 items-start"><span class="text-[#7d63ff] mt-0.5">&bull;</span><span>Temukan subdomain via <strong class="text-gray-400">Subdomain Scanner</strong></span></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
 </html>
