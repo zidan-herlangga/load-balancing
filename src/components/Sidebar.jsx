@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import tools, { categories } from '../data/tools';
 
@@ -19,11 +19,11 @@ export default function Sidebar({ open, onClose }) {
 
   return (
     <>
-      {open && <div className="sidebar-overlay" onClick={onClose} />}
+      {open && <div className="mobile-overlay" onClick={onClose} />}
       <aside className={`sidebar ${open ? 'open' : ''}`}>
         <div className="sidebar-inner">
-          <div className="sidebar-header">
-            <NavLink to="/" className="logo-section no-underline" onClick={onClose}>
+          <div className="sidebar-top">
+            <div className="logo-section no-underline">
               <div className="bg-[#7d63ff] p-2 rounded-lg glow-sm">
                 <svg width="18" height="14" viewBox="0 0 75 61" fill="none">
                   <path d="M39.154 16.883 51.575 0 62 45H12L28.73 9.31l10.424 7.573Z" fill="white"/>
@@ -35,8 +35,8 @@ export default function Sidebar({ open, onClose }) {
                 </h1>
                 <p className="text-[9px] text-gray-600 font-medium tracking-widest mt-0.5">PENTEST SUITE</p>
               </div>
-            </NavLink>
-            <button className="close-btn" onClick={onClose}>
+            </div>
+            <button className="sidebar-close" onClick={onClose}>
               <i className="fa-solid fa-xmark text-xl"></i>
             </button>
           </div>
@@ -49,9 +49,7 @@ export default function Sidebar({ open, onClose }) {
 
             {grouped.map(g => (
               <div key={g.label}>
-                <div className="cat-label">
-                  {g.label}
-                </div>
+                <div className="cat-label">{g.label}</div>
                 {g.items.map(t => (
                   <NavLink key={t.id} to={`/tool/${t.id}`} className={linkClass}>
                     <i className={`${t.icon} text-base shrink-0 w-5`}></i>
