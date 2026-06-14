@@ -7,7 +7,7 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"node server/index.js\" \"vite --port 3000\"",
+    "dev": "concurrently \"node server/index.js\" \"vite\"",
     "dev:client": "vite --port 3000",
     "dev:server": "node server/index.js",
     "build": "vite build",

@@ -630,6 +630,9 @@ app.get('*', (req, res) => {
     res.status(404).send('API endpoint not found');
     return;
   }
+  if (/\.[a-zA-Z0-9]+$/.test(req.path)) {
+    return res.status(404).send('Not found');
+  }
   res.sendFile(path.resolve(__dirname, '..', 'dist', 'index.html'));
 });
 
