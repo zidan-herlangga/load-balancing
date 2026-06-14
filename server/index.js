@@ -18,7 +18,7 @@ try {
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.static(path.resolve(process.cwd(), 'dist')));
+app.use(express.static(path.resolve(__dirname, '..', 'dist')));
 app.use(express.json({ limit: '1mb' }));
 
 const startStream = (res) => {
@@ -630,7 +630,7 @@ app.get('*', (req, res) => {
     res.status(404).send('API endpoint not found');
     return;
   }
-  res.sendFile(path.resolve(process.cwd(), 'dist', 'index.html'));
+  res.sendFile(path.resolve(__dirname, '..', 'dist', 'index.html'));
 });
 
 // ──────────────────────────────────────────────
