@@ -1,16 +1,24 @@
 const express = require('express');
 const path = require('path');
-const whois = require('whois-json');
 const https = require('https');
 const http = require('http');
 const net = require('net');
 const dns = require('dns');
 const crypto = require('crypto');
 const tls = require('tls');
-const app = express();
-const port = 3000;
 
-app.use(express.static(path.join(__dirname, 'public')));
+// whois-json may fail in serverless environments
+let whois;
+try {
+  whois = require('whois-json');
+} catch (e) {
+  whois = null;
+}
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(express.static(path.resolve(process.cwd(), 'public')));
 app.use(express.json({ limit: '1mb' }));
 
 const startStream = (res) => {
@@ -257,6 +265,7 @@ app.post('/api/run-whois', async (req, res) => {
   startStream(res);
   const target = req.body.target;
   if (!target) { res.write('[ERROR] No domain provided\n'); res.end(); return; }
+  if (!whois) { res.write('[ERROR] Whois module unavailable in this environment\n'); res.end(); return; }
   res.write(`[INFO] Whois Lookup: ${target}\n\n`);
   try {
     const results = await whois(target);
