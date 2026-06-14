@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>DevSec Hub | Local Security Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      body {
+        background-color: #0b0e14;
+      }
+      .active-tool {
+        border-left: 4px solid #7d63ff;
+        background: rgba(125, 99, 255, 0.1);
+        color: white;
+      }
+      #console::-webkit-scrollbar {
+        width: 5px;
+      }
+      #console::-webkit-scrollbar-thumb {
+        background: #7d63ff;
+        border-radius: 10px;
+      }
+      pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+    </style>
+  </head>
+  <body class="text-gray-400">
+    <div class="flex min-h-screen">
+      <aside class="w-72 bg-gray-900 border-r border-gray-800 p-8 space-y-2">
+        <div class="flex items-center gap-3 mb-12">
+          <div
+            class="bg-[#7d63ff] p-2 rounded-lg shadow-lg shadow-purple-500/20"
+          >
+            <svg
+              width="25"
+              height="20"
+              viewBox="0 0 75 61"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M39.154 16.883 51.575 0 62 45H12L28.73 9.31l10.424 7.573Z"
+                fill="white"
+              ></path>
+            </svg>
+          </div>
+          <h1 class="text-white font-bold text-xl tracking-tighter">
+            DEVSEC<span class="text-[#7d63ff]">HUB</span>
+          </h1>
+        </div>
+
+        <nav class="space-y-1">
+          <button
+            onclick="selectTool('k6')"
+            id="btn-k6"
+            class="tool-btn w-full text-left p-4 rounded-xl text-sm active-tool transition-all"
+          >
+            🚀 Load Test (k6)
+          </button>
+          <button
+            onclick="selectTool('nmap')"
+            id="btn-nmap"
+            class="tool-btn w-full text-left p-4 rounded-xl text-sm hover:bg-gray-800 transition-all"
+          >
+            🔍 Port Scanner
+          </button>
+          <button
+            onclick="selectTool('headers')"
+            id="btn-headers"
+            class="tool-btn w-full text-left p-4 rounded-xl text-sm hover:bg-gray-800 transition-all"
+          >
+            🛡️ Header Audit
+          </button>
+          <button
+            onclick="selectTool('ssl')"
+            id="btn-ssl"
+            class="tool-btn w-full text-left p-4 rounded-xl text-sm hover:bg-gray-800 transition-all"
+          >
+            🔒 SSL Checker
+          </button>
+          <button
+            onclick="selectTool('whois')"
+            id="btn-whois"
+            class="tool-btn w-full text-left p-4 rounded-xl text-sm hover:bg-gray-800 transition-all"
+          >
+            🌐 Whois Lookup
+          </button>
+        </nav>
+      </aside>
+
+      <main class="flex-1 p-10">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div
+            class="bg-gray-900 p-8 rounded-3xl border border-gray-800 shadow-2xl h-fit"
+          >
+            <h2 id="tool-name" class="text-white font-bold mb-8 text-2xl">
+              Load Test (k6)
+            </h2>
+            <div id="form-content" class="space-y-6"></div>
+            <button
+              id="runBtn"
+              class="w-full mt-10 bg-[#7d63ff] py-5 rounded-2xl text-white font-bold shadow-xl shadow-purple-500/20 hover:brightness-110 active:scale-95 transition-all uppercase tracking-widest text-sm"
+            >
+              Run Tool Engine
+            </button>
+          </div>
+
+          <div
+            class="lg:col-span-2 flex flex-col bg-black rounded-3xl border border-gray-800 shadow-2xl overflow-hidden"
+          >
+            <div
+              class="bg-gray-900/80 px-6 py-4 border-b border-gray-800 flex justify-between items-center"
+            >
+              <div class="flex gap-2">
+                <div
+                  class="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"
+                ></div>
+                <div
+                  class="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"
+                ></div>
+                <div
+                  class="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50"
+                ></div>
+              </div>
+              <span
+                id="status"
+                class="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-600"
+                >Idle Mode</span
+              >
+            </div>
+            <pre
+              id="console"
+              class="p-8 h-[600px] overflow-y-auto font-mono text-sm text-green-400 leading-relaxed"
+            >
+Dashboard siap. Pilih alat di sidebar untuk memulai analisis...</pre
+            >
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      let currentTool = 'k6';
+
+      function selectTool(tool) {
+        currentTool = tool;
+        document
+          .querySelectorAll('.tool-btn')
+          .forEach((b) => b.classList.remove('active-tool'));
+        document.getElementById(`btn-${tool}`).classList.add('active-tool');
+
+        const nameEl = document.getElementById('tool-name');
+        const formEl = document.getElementById('form-content');
+
+        const configs = {
+          k6: {
+            title: 'Load Test (k6)',
+            html: `<label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Target URL</label><input type="text" id="target" value="https://test.k6.io" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl text-white focus:border-[#7d63ff] outline-none"><div class="grid grid-cols-2 gap-4"><div><label class="text-[10px] text-gray-500 uppercase">Users</label><input type="number" id="vus" value="10" class="w-full bg-gray-800 border-gray-700 p-4 rounded-xl text-white"></div><div><label class="text-[10px] text-gray-500 uppercase">Duration</label><input type="number" id="dur" value="15" class="w-full bg-gray-800 border-gray-700 p-4 rounded-xl text-white"></div></div>`,
+          },
+          nmap: {
+            title: 'Port Scanner',
+            html: `<label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Target Host</label><input type="text" id="target" value="127.0.0.1" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl text-white focus:border-[#7d63ff] outline-none">`,
+          },
+          headers: {
+            title: 'Header Audit',
+            html: `<label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">URL Audit</label><input type="text" id="target" value="https://google.com" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl text-white focus:border-[#7d63ff] outline-none">`,
+          },
+          ssl: {
+            title: 'SSL Checker',
+            html: `<label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Domain Name</label><input type="text" id="target" value="google.com" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl text-white focus:border-[#7d63ff] outline-none">`,
+          },
+          whois: {
+            title: 'Whois Lookup',
+            html: `<label class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Domain</label><input type="text" id="target" value="google.com" class="w-full bg-gray-800 border border-gray-700 p-4 rounded-xl text-white focus:border-[#7d63ff] outline-none">`,
+          },
+        };
+
+        nameEl.innerText = configs[tool].title;
+        formEl.innerHTML = configs[tool].html;
+      }
+
+      selectTool('k6');
+
+      document.getElementById('runBtn').onclick = async () => {
+        const consoleBox = document.getElementById('console');
+        const statusLabel = document.getElementById('status');
+
+        consoleBox.innerText = `[SYSTEM] Menginisialisasi ${currentTool.toUpperCase()}...\n`;
+        statusLabel.innerText = 'Processing...';
+        statusLabel.className = 'text-yellow-500 font-bold';
+
+        const data = {
+          target: document.getElementById('target').value,
+          vus: document.getElementById('vus')?.value,
+          duration: document.getElementById('dur')?.value,
+        };
+
+        try {
+          const res = await fetch(`/api/run-${currentTool}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+
+          while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            consoleBox.innerText += decoder.decode(value);
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+          }
+        } catch (err) {
+          consoleBox.innerText += `\n[FATAL ERROR]: ${err.message}`;
+        } finally {
+          statusLabel.innerText = 'Idle Mode';
+          statusLabel.className = 'text-gray-600 font-bold';
+        }
+      };
+    </script>
+  </body>
+</html>
