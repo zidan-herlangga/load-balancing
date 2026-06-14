@@ -6,6 +6,7 @@ const net = require('net');
 const dns = require('dns');
 const crypto = require('crypto');
 const tls = require('tls');
+const fs = require('fs');
 
 // whois-json may fail in serverless environments
 let whois;
@@ -18,7 +19,8 @@ try {
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(express.static(path.resolve(__dirname, '..', 'dist')));
+const distDir = [path.resolve(__dirname, '..', 'dist'), path.resolve(process.cwd(), 'dist')].find(p => fs.existsSync(p)) || path.resolve(__dirname, '..', 'dist');
+app.use(express.static(distDir));
 app.use(express.json({ limit: '1mb' }));
 
 const startStream = (res) => {
@@ -633,7 +635,7 @@ app.get('*', (req, res) => {
   if (/\.[a-zA-Z0-9]+$/.test(req.path)) {
     return res.status(404).send('Not found');
   }
-  res.sendFile(path.resolve(__dirname, '..', 'dist', 'index.html'));
+  res.sendFile(path.join(distDir, 'index.html'));
 });
 
 // ──────────────────────────────────────────────
