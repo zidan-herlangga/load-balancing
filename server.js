@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const whois = require('whois-json');
 const https = require('https');
 const http = require('http');
@@ -9,7 +10,7 @@ const tls = require('tls');
 const app = express();
 const port = 3000;
 
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json({ limit: '1mb' }));
 
 const startStream = (res) => {
@@ -613,12 +614,16 @@ app.post('/api/run-password', (req, res) => {
 });
 
 // ──────────────────────────────────────────────
-//  Start
+//  Start (only when run directly, not via Vercel)
 // ──────────────────────────────────────────────
-app.listen(port, () => {
-  console.log(`\x1b[35m%s\x1b[0m`, `\u{1F680} DevSec Hub aktif di http://localhost:${port}`);
-  console.log(`${'='.repeat(50)}`);
-  console.log(`  14 pentest tools - all pure Node.js`);
-  console.log(`  No external CLI tools required`);
-  console.log(`${'='.repeat(50)}`);
-});
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`\x1b[35m%s\x1b[0m`, `\u{1F680} DevSec Hub aktif di http://localhost:${port}`);
+    console.log(`${'='.repeat(50)}`);
+    console.log(`  14 pentest tools - all pure Node.js`);
+    console.log(`  No external CLI tools required`);
+    console.log(`${'='.repeat(50)}`);
+  });
+}
+
+module.exports = app;
