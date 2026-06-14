@@ -623,6 +623,17 @@ app.post('/api/run-password', (req, res) => {
 });
 
 // ──────────────────────────────────────────────
+//  SPA fallback — serve index.html for unknown routes
+// ──────────────────────────────────────────────
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api/')) {
+    res.status(404).send('API endpoint not found');
+    return;
+  }
+  res.sendFile(path.resolve(process.cwd(), 'dist', 'index.html'));
+});
+
+// ──────────────────────────────────────────────
 //  Start (only when run directly, not via Vercel)
 // ──────────────────────────────────────────────
 if (require.main === module) {
